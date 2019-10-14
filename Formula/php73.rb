@@ -3,7 +3,7 @@ require File.expand_path("../../Abstract/abstract-php", __FILE__)
 class Php73 < AbstractPhp
   init
   desc "PHP Version 7.3"
-  revision 13
+  revision 14
 
   bottle do
     sha256 "e60d5ee36a77c2106d892d9088af9bc0c0e77fa84eef1b5fdb517718de9dfd3f" => :high_sierra
