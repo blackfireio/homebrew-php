@@ -3,9 +3,9 @@ require File.expand_path("../../Abstract/abstract-php", __FILE__)
 class Php73 < AbstractPhp
   init
   desc "PHP Version 7.3"
-  revision 13
+  revision 1
 
-  include AbstractPhpVersion::Php72Defs
+  include AbstractPhpVersion::Php73Defs
 
   url PHP_SRC_TARBALL
   sha256 PHP_CHECKSUM[:sha256]
