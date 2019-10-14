@@ -56,7 +56,7 @@ class AbstractPhp < Formula
     depends_on "argon2" => :optional if build.include?("with-argon2")
 
     # libsodium for 7.2
-    depends_on "libsodium" => :recommended if name.split("::")[2].downcase.start_with?("php72")
+    depends_on "libsodium" => :recommended if name.split("::")[2].downcase.start_with?("php72", "php73")
 
     deprecated_option "with-pgsql" => "with-postgresql"
     depends_on "postgresql" => :optional
@@ -78,7 +78,7 @@ class AbstractPhp < Formula
     depends_on "httpd" => :optional
 
     # Argon2 option
-    if name.split("::")[2].downcase.start_with?("php72")
+    if name.split("::")[2].downcase.start_with?("php72", "php73")
       option "with-argon2", "Include libargon2 password hashing support"
     end
 

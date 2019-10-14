@@ -82,4 +82,15 @@ class AbstractPhpVersion < Formula
       :sha256 => "f841ac58e17471f2241ea892b34edb01dc9b93ad9f661ffe4e3f1f476a8f4aee",
     }.freeze
   end
+
+  module Php73Defs
+    PHP_SRC_TARBALL = "https://php.net/get/php-7.3.10.tar.bz2/from/this/mirror".freeze
+    PHP_GITHUB_URL  = "https://github.com/php/php-src.git".freeze
+    PHP_VERSION     = "7.3.10".freeze
+    PHP_BRANCH      = "PHP-7.3".freeze
+
+    PHP_CHECKSUM    = {
+      :sha256 => "506dd871c0fb8f00f872f53dd3b1dfa5f23a9edb4dfc521e5669c78a78c45448",
+    }.freeze
+  end
 end
