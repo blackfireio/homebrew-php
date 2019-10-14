@@ -38,6 +38,7 @@ class AbstractPhp < Formula
     depends_on "imap-uw" if build.include?("with-imap")
     depends_on "jpeg"
     depends_on "webp" => :optional if name.split("::")[2].downcase.start_with?("php7")
+    depends_on "libzip" => :optional if name.split("::")[2].downcase.start_with?("php73")
     depends_on "libvpx" => :optional if name.split("::")[2].downcase.start_with?("php55", "php56")
     depends_on "libpng"
     depends_on "libxml2" if build.include?("with-homebrew-libxml2") || MacOS.version < :lion || MacOS.version >= :el_capitan
