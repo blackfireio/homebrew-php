@@ -437,7 +437,7 @@ INFO
 
     chmod_R 0775, lib+"php"
 
-    #system bin+"pear", "config-set", "php_ini", config_path+"php.ini", "system" unless skip_pear_config_set?
+    # system bin+"pear", "config-set", "php_ini", config_path+"php.ini", "system" unless skip_pear_config_set?
 
     if build_fpm?
       if File.exist?("sapi/fpm/init.d.php-fpm")
