@@ -10,12 +10,13 @@ class AbstractPhp < Formula
     # So PHP extensions don't report missing symbols
     skip_clean "bin", "sbin"
 
+    n2 = name
     head do
       depends_on "autoconf" => :build
       depends_on "re2c" => :build
       depends_on "flex" => :build
-      depends_on "bison@2.7" => :build unless name.split("::")[2].downcase.start_with?("php74")
-      depends_on "bison@3.4" => :build if name.split("::")[2].downcase.start_with?("php74")
+      #depends_on "bison@2.7" => :build unless n2.split("::")[2].downcase.start_with?("php74")
+      depends_on "bison@3.4" => :build
     end
 
     # obtain list of php formulas
