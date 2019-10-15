@@ -291,7 +291,7 @@ INFO
     end
 
     args << "--with-openssl"
-    args << "--with-openssl-dir" + Formula["openssl"].opt_prefix.to_s
+    args << "--with-openssl-dir=" + Formula["openssl"].opt_prefix.to_s
 
     # Build PHP-FPM by default
     if build_fpm?
