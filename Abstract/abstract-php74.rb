@@ -30,65 +30,15 @@ class AbstractPhp74 < Formula
     end
 
     depends_on "curl"
-    depends_on "enchant" => :optional
-    depends_on "freetds" if build.include?("with-mssql")
-    depends_on "freetype"
     depends_on "gettext"
     depends_on "gmp" => :optional
     depends_on "icu4c"
     depends_on "imap-uw" if build.include?("with-imap")
-    depends_on "jpeg"
-    depends_on "webp" => :optional if name.split("::")[2].downcase.start_with?("php7")
-    depends_on "libvpx" => :optional if name.split("::")[2].downcase.start_with?("php55", "php56")
-    depends_on "libpng"
     depends_on "libxml2"
-    depends_on "unixodbc" unless build.include?("without-unixodbc")
     depends_on "readline"
-    depends_on "mysql" if build.include?("with-libmysql")
-    depends_on "libzip" if name.split("::")[2].downcase.start_with?("php73")
-    depends_on "krb5" if name.split("::")[2].downcase.start_with?("php74")
+    depends_on "mysql"
     depends_on "oniguruma" if name.split("::")[2].downcase.start_with?("php74")
     depends_on "openssl"
-
-    #argon for 7.2
-    depends_on "libsodium"
-
-    deprecated_option "with-pgsql" => "with-postgresql"
-    depends_on "postgresql" => :optional
-
-    # Sanity Checks
-
-    if build.include?("with-cgi") && build.include?("with-fpm")
-      raise "Cannot specify more than one CGI executable to build."
-    end
-
-    option "with-httpd", "Enable building of shared Apache Handler module"
-    deprecated_option "homebrew-apxs" => "with-homebrew-apxs"
-    deprecated_option "with-homebrew-apxs" => "with-httpd"
-    deprecated_option "with-apache" => "with-httpd"
-    deprecated_option "with-apache22" => "with-httpd"
-    deprecated_option "with-httpd22" => "with-httpd"
-    deprecated_option "with-httpd24" => "with-httpd"
-
-    depends_on "httpd" => :optional
-
-    option "with-cgi", "Enable building of the CGI executable (implies --without-fpm)"
-    option "with-debug", "Compile with debugging symbols"
-    option "with-embed", "Compile with embed support (built as a static library)"
-    option "with-imap", "Include IMAP extension"
-    option "with-libmysql", "Include (old-style) libmysql support instead of mysqlnd"
-    option "with-mssql", "Include MSSQL-DB support"
-    option "with-pear", "Build with PEAR"
-    option "with-pdo-oci", "Include Oracle databases (requries ORACLE_HOME be set)"
-    unless name.split("::")[2].casecmp("php53").zero?
-      option "with-phpdbg", "Enable building of the phpdbg SAPI executable"
-    end
-    option "with-thread-safety", "Build with thread safety"
-    option "without-bz2", "Build without bz2 support"
-    option "without-fpm", "Disable building of the fpm SAPI executable"
-    option "without-legacy-mysql", "Do not include the deprecated mysql_ functions"
-    option "without-pcntl", "Build without Process Control support"
-    option "without-unixodbc", "Build without unixODBC support"
   end
 
   # Fixes the pear .lock permissions issue that keeps it from operating correctly.
@@ -101,10 +51,6 @@ class AbstractPhp74 < Formula
 
   def home_path
     File.expand_path("~")
-  end
-
-  def build_fpm?
-    true unless build.without?("fpm") || build.with?("cgi")
   end
 
   def php_version
@@ -184,7 +130,7 @@ INFO
   def install_args
     # Prevent PHP from harcoding sed shim path
     ENV["lt_cv_path_SED"] = "sed"
-    ENV["PKG_CONFIG_PATH"] = "#{Formula["oniguruma"].opt_prefix}/lib/pkgconfig:#{Formula["libxslt"].opt_prefix}/lib/pkgconfig:#{Formula["libzip"].opt_prefix}/lib/pkgconfig:#{Formula["openssl"].opt_prefix}/lib/pkgconfig:#{Formula["libxml2"].opt_prefix}/lib/pkgconfig:$PKG_CONFIG_PATH"
+    #ENV["PKG_CONFIG_PATH"] = "#{Formula["oniguruma"].opt_prefix}/lib/pkgconfig:#{Formula["libxslt"].opt_prefix}/lib/pkgconfig:#{Formula["libzip"].opt_prefix}/lib/pkgconfig:#{Formula["openssl"].opt_prefix}/lib/pkgconfig:#{Formula["libxml2"].opt_prefix}/lib/pkgconfig:$PKG_CONFIG_PATH"
 
     # Ensure system dylibs can be found by linker on Sierra
     ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :sierra
@@ -196,144 +142,49 @@ INFO
       "--with-config-file-path=#{config_path}",
       "--with-config-file-scan-dir=#{config_path}/conf.d",
       "--mandir=#{man}",
-      "--enable-bcmath",
-      "--enable-calendar",
-      "--enable-dba",
-      "--enable-exif",
-      "--enable-ftp",
-      "--enable-gd",
-      "--enable-mbregex",
       "--enable-mbstring",
-      "--enable-shmop",
-      "--enable-soap",
-      "--enable-sockets",
-      "--enable-sysvmsg",
-      "--enable-sysvsem",
-      "--enable-sysvshm",
-      "--with-zip",
-      "--with-gettext=#{Formula["gettext"].opt_prefix}",
-      "--with-iconv-dir=/usr",
-      "--with-kerberos",
-      "--with-mhash",
-      "--with-ndbm=/usr",
-      "--with-xmlrpc",
+      "--enable-pcntl",
+      "--enable-mysqlnd",
+      "--enable-opcache",
+      "--with-curl",
+      "--with-mbstring",
+      "--with-openssl",
+      "--with-readline",
+      "--with-recode",
       "--with-zlib",
-      "--with-readline=#{Formula["readline"].opt_prefix}",
-      "--without-gmp",
-      "--without-snmp",
+      "--with-mysqli",
+      "--with-pgsql",
+      "--with-pear",
     ]
 
-    args << "LIBXML_CFLAGS=-I#{Formula["libxml2"].opt_prefix}/include/libxml2"
-    args << "LIBXML_LIBS=-L#{Formula["libxml2"].opt_prefix}/lib"
-
-    args << "KERBEROS_CFLAGS=-I#{Formula["krb5"].opt_prefix}/include"
-    args << "KERBEROS_LIBS=-L#{Formula["krb5"].opt_prefix}/lib"
-
-    args << "OPENSSL_CFLAGS=-I#{Formula["openssl"].opt_prefix}/include"
-    args << "OPENSSL_LIBS=-L#{Formula["openssl"].opt_prefix}/lib"
-
-    args << "SQLITE_CFLAGS=-I#{Formula["sqlite"].opt_prefix}/include"
-    args << "SQLITE_LIBS=-L#{Formula["sqlite"].opt_prefix}/lib"
-
-    args << "ZLIB_CFLAGS=-I#{Formula["zlib"].opt_prefix}/include"
-    args << "ZLIB_LIBS=-L#{Formula["zlib"].opt_prefix}/lib"
-
-    args << "CURL_CFLAGS=-I#{Formula["curl"].opt_prefix}/include"
-    args << "CURL_LIBS=-L#{Formula["curl"].opt_prefix}/lib"
-
-    args << "ONIG_CFLAGS=-I#{Formula["oniguruma"].opt_prefix}/include"
-    args << "ONIG_LIBS=-L#{Formula["oniguruma"].opt_prefix}/lib"
-
-    args << "XSL_CFLAGS=-I#{Formula["libxslt"].opt_prefix}/include"
-    args << "XSL_LIBS=-L#{Formula["libxslt"].opt_prefix}/lib"
-
-    args << "PNG_CFLAGS=-I#{Formula["libpng"].opt_prefix}/include"
-    args << "PNG_LIBS=-L#{Formula["libpng"].opt_prefix}/lib"
-
-    args << "LIBZIP_CFLAGS=-I#{Formula["libzip"].opt_prefix}/include"
-    args << "LIBZIP_LIBS=-L#{Formula["libzip"].opt_prefix}/lib"
-
-    args << "LIBSODIUM_CFLAGS=-I#{Formula["libsodium"].opt_prefix}/include"
-    args << "LIBSODIUM_LIBS=-L#{Formula["libsodium"].opt_prefix}/lib"
-
-    # Build PDO ODBC with unixODBC by default
-    unless build.without? "unixodbc"
-      args << "--with-pdo-odbc=unixODBC,#{Formula["unixodbc"].opt_prefix}"
-      args << "--with-unixODBC=#{Formula["unixodbc"].opt_prefix}"
-    end
-
-    # Build Apache module by default
-    if build.with?("httpd")
-      args << "--with-apxs2=#{apache_apxs}"
-      args << "--libexecdir=#{libexec}"
-
-      unless build.with?("thread-safety")
-        inreplace "configure",
-          "APACHE_THREADED_MPM=`$APXS_HTTPD -V | grep 'threaded:.*yes'`",
-          "APACHE_THREADED_MPM="
-      end
-    end
-
-    if build.with? "bz2"
-      args << "--with-bz2=/usr" if OS.mac?
-    end
-
-    if build.with? "debug"
-      args << "--enable-debug"
-    end
-
-    if build.with? "embed"
-      args << "--enable-embed=static"
-    end
-
-    if build.with? "enchant"
-      args << "--with-enchant"
-    end
-
-    args << "--with-openssl"
     args << "--with-openssl-dir=" + Formula["openssl"].opt_prefix.to_s
 
-    # Build PHP-FPM by default
-    if build_fpm?
-      args << "--enable-fpm"
-      args << "--with-fpm-user=_www"
-      args << "--with-fpm-group=_www"
-      (prefix+"var/log").mkpath
-      touch prefix+"var/log/php-fpm.log"
-      plist_path.write plist
-      plist_path.chmod 0644
-    elsif build.with? "cgi"
-      args << "--enable-cgi"
-    end
+    # args << "LIBXML_CFLAGS=-I#{Formula["libxml2"].opt_prefix}/include/libxml2"
+    # args << "LIBXML_LIBS=-L#{Formula["libxml2"].opt_prefix}/lib"
 
-    args << "--with-curl"
-    args << "--with-xsl"
+    # args << "KERBEROS_CFLAGS=-I#{Formula["krb5"].opt_prefix}/include"
+    # args << "KERBEROS_LIBS=-L#{Formula["krb5"].opt_prefix}/lib"
 
-    if build.with? "imap"
-      args << "--with-imap=#{Formula["imap-uw"].opt_prefix}"
-      args << "--with-imap-ssl=" + Formula["openssl"].opt_prefix.to_s
-    end
+    # args << "OPENSSL_CFLAGS=-I#{Formula["openssl"].opt_prefix}/include"
+    # args << "OPENSSL_LIBS=-L#{Formula["openssl"].opt_prefix}/lib"
 
-    if build.with? "libmysql"
-      args << "--with-mysql-sock=/tmp/mysql.sock"
-      args << "--with-mysqli=#{HOMEBREW_PREFIX}/bin/mysql_config"
-      args << "--with-mysql=#{HOMEBREW_PREFIX}" unless (build.without? "legacy-mysql") || php_version.start_with?("7.")
-      args << "--with-pdo-mysql=#{HOMEBREW_PREFIX}"
-    elsif build.with? "mysql"
-      args << "--with-mysql-sock=/tmp/mysql.sock"
-      args << "--with-mysqli=mysqlnd"
-      args << "--with-mysql=mysqlnd" unless (build.without? "legacy-mysql") || php_version.start_with?("7.")
-      args << "--with-pdo-mysql=mysqlnd"
-    end
+    # args << "SQLITE_CFLAGS=-I#{Formula["sqlite"].opt_prefix}/include"
+    # args << "SQLITE_LIBS=-L#{Formula["sqlite"].opt_prefix}/lib"
 
-    if build.with? "mssql"
-      args << "--with-mssql=#{Formula["freetds"].opt_prefix}"
-      args << "--with-pdo-dblib=#{Formula["freetds"].opt_prefix}"
-    end
+    # args << "ZLIB_CFLAGS=-I#{Formula["zlib"].opt_prefix}/include"
+    # args << "ZLIB_LIBS=-L#{Formula["zlib"].opt_prefix}/lib"
 
-    if build.with? "pcntl"
-      args << "--enable-pcntl"
-    end
+    # args << "CURL_CFLAGS=-I#{Formula["curl"].opt_prefix}/include"
+    # args << "CURL_LIBS=-L#{Formula["curl"].opt_prefix}/lib"
+
+    # args << "ONIG_CFLAGS=-I#{Formula["oniguruma"].opt_prefix}/include"
+    # args << "ONIG_LIBS=-L#{Formula["oniguruma"].opt_prefix}/lib"
+
+    # args << "XSL_CFLAGS=-I#{Formula["libxslt"].opt_prefix}/include"
+    # args << "XSL_LIBS=-L#{Formula["libxslt"].opt_prefix}/lib"
+
+    # args << "LIBZIP_CFLAGS=-I#{Formula["libzip"].opt_prefix}/include"
+    # args << "LIBZIP_LIBS=-L#{Formula["libzip"].opt_prefix}/lib"
 
     if build.without? "pear"
       args << "--without-pear"
@@ -341,8 +192,6 @@ INFO
 
     if build.with? "postgresql"
       if Formula["postgresql"].opt_prefix.directory?
-        args << "--with-pgsql=#{Formula["postgresql"].opt_prefix}"
-        args << "--with-pdo-pgsql=#{Formula["postgresql"].opt_prefix}"
       else
         args << "--with-pgsql=#{`pg_config --includedir`}"
         args << "--with-pdo-pgsql=#{`which pg_config`}"
@@ -386,13 +235,6 @@ INFO
     system "./buildconf", "--force" if build.head?
     system "./configure", *install_args
 
-    if build.with?("httpd")
-      # Use Homebrew prefix for the Apache libexec folder
-      inreplace "Makefile",
-        /^INSTALL_IT = \$\(mkinstalldirs\) '([^']+)' (.+) LIBEXECDIR=([^\s]+) (.+)$/,
-        "INSTALL_IT = $(mkinstalldirs) '#{libexec}/apache2' \\2 LIBEXECDIR='#{libexec}/apache2' \\4"
-    end
-
     inreplace "Makefile" do |s|
       s.change_make_var! "EXTRA_LIBS", "\\1 -lstdc++"
     end
@@ -410,74 +252,10 @@ INFO
     chmod_R 0775, lib+"php"
 
     system bin+"pear", "config-set", "php_ini", config_path+"php.ini", "system" unless skip_pear_config_set?
-
-    if build_fpm?
-      if File.exist?("sapi/fpm/init.d.php-fpm")
-        chmod 0755, "sapi/fpm/init.d.php-fpm"
-        sbin.install "sapi/fpm/init.d.php-fpm" => "php#{php_version_path}-fpm"
-      end
-
-      if File.exist?("sapi/cgi/fpm/php-fpm")
-        chmod 0755, "sapi/cgi/fpm/php-fpm"
-        sbin.install "sapi/cgi/fpm/php-fpm" => "php#{php_version_path}-fpm"
-      end
-
-      if !File.exist?(config_path+"php-fpm.d/www.conf") && File.exist?(config_path+"php-fpm.d/www.conf.default")
-        mv(config_path+"php-fpm.d/www.conf.default", config_path+"php-fpm.d/www.conf")
-      end
-
-      unless File.exist?(config_path+"php-fpm.conf")
-        if File.exist?("sapi/fpm/php-fpm.conf")
-          config_path.install "sapi/fpm/php-fpm.conf"
-        end
-
-        if File.exist?("sapi/cgi/fpm/php-fpm.conf")
-          config_path.install "sapi/cgi/fpm/php-fpm.conf"
-        end
-
-        inreplace config_path+"php-fpm.conf" do |s|
-          s.sub!(/^;?daemonize\s*=.+$/, "daemonize = no")
-          s.sub!(/^;include\s*=.+$/, ";include=#{config_path}/fpm.d/*.conf") if php_version.start_with?("5")
-          s.sub!(/^;?listen\.mode\s*=.+$/, "listen.mode = 0666") if php_version.start_with?("5")
-          s.sub!(/^;?pm\.max_children\s*=.+$/, "pm.max_children = 10") if php_version.start_with?("5")
-          s.sub!(/^;?pm\.start_servers\s*=.+$/, "pm.start_servers = 3") if php_version.start_with?("5")
-          s.sub!(/^;?pm\.min_spare_servers\s*=.+$/, "pm.min_spare_servers = 2") if php_version.start_with?("5")
-          s.sub!(/^;?pm\.max_spare_servers\s*=.+$/, "pm.max_spare_servers = 5") if php_version.start_with?("5")
-        end
-      end
-    end
   end
 
   def caveats
     s = []
-
-    if build.with?("httpd")
-      if MacOS.version <= :leopard
-        s << <<~EOS
-          For 10.5 and Apache:
-              Apache needs to run in 32-bit mode. You can either force Apache to start in 32-bit mode or you can thin the Apache executable.
-        EOS
-      end
-
-      if php_version.start_with?("7.")
-        s << <<~EOS
-          To enable PHP in Apache add the following to httpd.conf and restart Apache:
-              LoadModule php7_module #{HOMEBREW_PREFIX}/opt/php#{php_version_path}/libexec/apache2/libphp7.so
-
-              <FilesMatch \.php$>
-                  SetHandler application/x-httpd-php
-              </FilesMatch>
-
-          Finally, check DirectoryIndex includes index.php
-              DirectoryIndex index.php index.html
-        EOS
-      else
-        s << <<~EOS
-          To enable PHP in Apache add the following to httpd.conf and restart Apache:
-              LoadModule php5_module #{HOMEBREW_PREFIX}/opt/php#{php_version_path}/libexec/apache2/libphp5.so
-        EOS
-      end
-    end
 
     s << <<~EOS
       The php.ini file can be found in:
@@ -505,126 +283,10 @@ INFO
       PHP#{php_version_path} Extensions will always be compiled against this PHP. Please install them using --without-homebrew-php to enable compiling against system PHP.
     EOS
 
-    s << <<~EOS
-      ✩✩✩✩ PHP CLI ✩✩✩✩
-
-      If you wish to swap the PHP you use on the command line, you should add the following to ~/.bashrc, ~/.zshrc, ~/.profile or your shell's equivalent configuration file:
-        export PATH="$(brew --prefix homebrew/php/php#{php_version.delete(".")})/bin:$PATH"
-    EOS
-
-    if build.include?("with-mcrypt")
-      s << <<~EOS
-      ✩✩✩✩  Mcrypt ✩✩✩✩
-
-      mcrypt is no longer included by default, install it as a separate extension:
-
-          brew install php#{php_version_path}-mcrypt
-    EOS
-    end
-
-    if build.include?("enable-opcache")
-      s << <<~EOS
-      ✩✩✩✩ Opcache ✩✩✩✩
-
-      opcache (PHP 5.5 and 5.6) is no longer included by default, install it as a separate extension:
-
-          brew install php#{php_version_path}-opcache
-    EOS
-    end
-
-    if build.include?("with-gmp")
-      s << <<~EOS
-        GMP has moved to its own formula, please install it by running: brew install php#{php_version_path}-gmp
-      EOS
-    end
-
-    if build.include?("with-snmp")
-      s << <<~EOS
-        SNMP has moved to its own formula, please install it by running: brew install php#{php_version_path}-snmp
-      EOS
-    end
-
-    if build.include?("with-tidy")
-      s << <<~EOS
-        Tidy has moved to its own formula, please install it by running: brew install php#{php_version_path}-tidy
-      EOS
-    end
-
-    if build_fpm?
-      s << <<~EOS
-        ✩✩✩✩ FPM ✩✩✩✩
-
-        To launch php-fpm on startup:
-            mkdir -p ~/Library/LaunchAgents
-            cp #{opt_prefix}/#{plist_name}.plist ~/Library/LaunchAgents/
-            launchctl load -w ~/Library/LaunchAgents/#{plist_name}.plist
-
-        The control script is located at #{opt_sbin}/php#{php_version_path}-fpm
-      EOS
-
-      if MacOS.version >= :mountain_lion
-        s << <<~EOS
-          OS X 10.8 and newer come with php-fpm pre-installed, to ensure you are using the brew version you need to make sure #{HOMEBREW_PREFIX}/sbin is before /usr/sbin in your PATH:
-
-            PATH="#{HOMEBREW_PREFIX}/sbin:$PATH"
-        EOS
-      end
-
-      s << <<~EOS
-        You may also need to edit the plist to use the correct "UserName".
-
-        Please note that the plist was called 'homebrew-php.josegonzalez.php#{php_version.delete(".")}.plist' in old versions of this formula.
-
-        With the release of macOS Sierra the Apache module is now not built by default. If you want to build it on your system you have to install php with the --with-httpd option. See  brew options php#{php_version_path} for more details.
-      EOS
-    end
-
-    s << <<~EOS
-      By 31st March 2018 we will deprecate and archive the PHP tap.
-      Some of the formulae will be migrated to homebrew-core.
-
-      For more details, see https://github.com/Homebrew/homebrew-php/issues/4721
-    EOS
-
     s.join "\n"
   end
 
   test do
     system "#{bin}/php -i"
-
-    if build_fpm?
-      system "#{sbin}/php-fpm -y #{config_path}/php-fpm.conf -t"
-    end
-  end
-
-  def plist; <<~EOS
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version="1.0">
-    <dict>
-      <key>KeepAlive</key>
-      <true/>
-      <key>Label</key>
-      <string>#{plist_name}</string>
-      <key>ProgramArguments</key>
-      <array>
-        <string>#{opt_sbin}/php-fpm</string>
-        <string>--nodaemonize</string>
-        <string>--fpm-config</string>
-        <string>#{config_path}/php-fpm.conf</string>
-      </array>
-      <key>RunAtLoad</key>
-      <true/>
-      <key>LaunchOnlyOnce</key>
-      <true/>
-      <key>UserName</key>
-      <string>#{`whoami`.chomp}</string>
-      <key>WorkingDirectory</key>
-      <string>#{var}</string>
-      <key>StandardErrorPath</key>
-      <string>#{opt_prefix}/var/log/php-fpm.log</string>
-    </dict>
-    </plist>
-    EOS
   end
 end
