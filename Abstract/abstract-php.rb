@@ -10,12 +10,11 @@ class AbstractPhp < Formula
     # So PHP extensions don't report missing symbols
     skip_clean "bin", "sbin"
 
-    n2 = name
     head do
       depends_on "autoconf" => :build
       depends_on "re2c" => :build
       depends_on "flex" => :build
-      #depends_on "bison@2.7" => :build
+      #depends_on "bison@2.7" => :build # TODO: this is needed by php <= 7.3
       depends_on "bison@3.4" => :build # TODO: this is needed by php7.4
       depends_on "pkg-config" => :build
     end
@@ -49,6 +48,7 @@ class AbstractPhp < Formula
     depends_on "mysql" if build.include?("with-libmysql")
     depends_on "libzip" if name.split("::")[2].downcase.start_with?("php73")
     depends_on "krb5" if name.split("::")[2].downcase.start_with?("php74")
+    depends_on "oniguruma" if name.split("::")[2].downcase.start_with?("php74")
 
     # ssl
     if build.include?("with-homebrew-libressl")
