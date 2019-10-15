@@ -129,7 +129,7 @@ INFO
   def install_args
     # Prevent PHP from harcoding sed shim path
     ENV["lt_cv_path_SED"] = "sed"
-    #ENV["PKG_CONFIG_PATH"] = "#{Formula["oniguruma"].opt_prefix}/lib/pkgconfig:#{Formula["libxslt"].opt_prefix}/lib/pkgconfig:#{Formula["libzip"].opt_prefix}/lib/pkgconfig:#{Formula["openssl"].opt_prefix}/lib/pkgconfig:#{Formula["libxml2"].opt_prefix}/lib/pkgconfig:$PKG_CONFIG_PATH"
+    ENV["PKG_CONFIG_PATH"] = "#{Formula["libxml2"].opt_prefix}/lib/pkgconfig:#{ENV["PKG_CONFIG_PATH"]}"
 
     # Ensure system dylibs can be found by linker on Sierra
     ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :sierra
