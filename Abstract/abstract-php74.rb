@@ -200,35 +200,13 @@ INFO
       end
     end
 
-    unless php_version.start_with?("5.3")
-      # dtrace is not compatible with phpdbg: https://github.com/krakjoe/phpdbg/issues/38
-      if build.without? "phpdbg"
-        args << "--enable-dtrace"
-        args << "--disable-phpdbg"
-      else
-        args << "--enable-phpdbg"
-
-        if build.with? "debug"
-          args << "--enable-phpdbg-debug"
-        end
-      end
-
-      args << "--enable-zend-signals"
-    end
-
-    if build.with? "webp"
-      args << "--with-webp-dir=#{Formula['webp'].opt_prefix}"
-    end
-
-    if build.with? "libvpx"
-      args << "--with-vpx-dir=#{Formula['libvpx'].opt_prefix}"
-    end
+    args << "--enable-dtrace"
+    args << "--disable-phpdbg"
+    args << "--enable-zend-signals"
 
     if build.with? "thread-safety"
       args << "--enable-maintainer-zts"
     end
-
-    args << "--with-sodium"
 
     args
   end
