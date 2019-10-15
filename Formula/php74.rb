@@ -7,8 +7,8 @@ class Php74 < AbstractPhp74
 
   include AbstractPhpVersion::Php74Defs
 
-  #url PHP_SRC_TARBALL
-  #sha256 PHP_CHECKSUM[:sha256]
+  url PHP_SRC_TARBALL
+  sha256 PHP_CHECKSUM[:sha256]
 
   head PHP_GITHUB_URL, :branch => PHP_BRANCH
 
