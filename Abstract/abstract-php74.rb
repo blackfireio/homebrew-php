@@ -249,7 +249,8 @@ INFO
     ]
 
     if build.include?("with-homebrew-libxml2") || MacOS.version < :lion || MacOS.version >= :el_capitan
-      args << "--with-libxml-dir=#{Formula["libxml2"].opt_prefix}"
+      args << "LIBXML_CFLAGS=-I#{Formula["libxml2"].opt_prefix}/include"
+      args << "LIBXML_LIBS=-L#{Formula["libxml2"].opt_prefix}/lib"
     end
 
     # Build PDO ODBC with unixODBC by default
