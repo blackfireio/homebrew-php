@@ -262,6 +262,9 @@ INFO
     args << "CURL_CFLAGS=-I#{Formula["curl"].opt_prefix}/include"
     args << "CURL_LIBS=-L#{Formula["curl"].opt_prefix}/lib"
 
+    args << "ONIG_CFLAGS=-I#{Formula["oniguruma"].opt_prefix}/include"
+    args << "ONIG_LIBS=-L#{Formula["oniguruma"].opt_prefix}/lib"
+
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
       args << "--with-pdo-odbc=unixODBC,#{Formula["unixodbc"].opt_prefix}"
