@@ -239,7 +239,7 @@ INFO
       "--without-snmp",
     ]
 
-    args << "LIBXML_CFLAGS=-I#{Formula["libxml2"].opt_prefix}/include"
+    args << "LIBXML_CFLAGS=-I#{Formula["libxml2"].opt_prefix}/include/libxml2"
     args << "LIBXML_LIBS=-L#{Formula["libxml2"].opt_prefix}/lib"
 
     args << "KERBEROS_CFLAGS=-I#{Formula["krb5"].opt_prefix}/include"
