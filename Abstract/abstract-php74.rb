@@ -29,7 +29,7 @@ class AbstractPhp74 < Formula
       conflicts_with php_formula_name, :because => "different php versions install the same binaries."
     end
 
-    depends_on "curl" if build.include?("with-homebrew-curl") || MacOS.version < :lion
+    depends_on "curl"
     depends_on "enchant" => :optional
     depends_on "freetds" if build.include?("with-mssql")
     depends_on "freetype"
@@ -89,10 +89,8 @@ class AbstractPhp74 < Formula
     option "with-cgi", "Enable building of the CGI executable (implies --without-fpm)"
     option "with-debug", "Compile with debugging symbols"
     option "with-embed", "Compile with embed support (built as a static library)"
-    option "with-homebrew-curl", "Include Curl support via Homebrew"
     option "with-homebrew-libressl", "Include LibreSSL instead of OpenSSL via Homebrew"
     option "with-homebrew-libxslt", "Include LibXSLT support via Homebrew"
-    option "with-homebrew-libxml2", "Include Libxml2 support via Homebrew"
     option "with-imap", "Include IMAP extension"
     option "with-libmysql", "Include (old-style) libmysql support instead of mysqlnd"
     option "with-mssql", "Include MSSQL-DB support"
@@ -104,8 +102,6 @@ class AbstractPhp74 < Formula
     option "with-thread-safety", "Build with thread safety"
     option "without-bz2", "Build without bz2 support"
     option "without-fpm", "Disable building of the fpm SAPI executable"
-    option "without-ldap", "Build without LDAP support"
-    option "without-mysql", "Remove MySQL/MariaDB support"
     option "without-legacy-mysql", "Do not include the deprecated mysql_ functions"
     option "without-pcntl", "Build without Process Control support"
     option "without-unixodbc", "Build without unixODBC support"
@@ -263,6 +259,9 @@ INFO
     args << "ZLIB_CFLAGS=-I#{Formula["zlib"].opt_prefix}/include"
     args << "ZLIB_LIBS=-L#{Formula["zlib"].opt_prefix}/lib"
 
+    args << "CURL_CFLAGS=-I#{Formula["curl"].opt_prefix}/include"
+    args << "CURL_LIBS=-L#{Formula["curl"].opt_prefix}/lib"
+
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
       args << "--with-pdo-odbc=unixODBC,#{Formula["unixodbc"].opt_prefix}"
@@ -336,11 +335,6 @@ INFO
     if build.with? "imap"
       args << "--with-imap=#{Formula["imap-uw"].opt_prefix}"
       args << "--with-imap-ssl=" + Formula["openssl"].opt_prefix.to_s
-    end
-
-    unless build.without? "ldap"
-      args << "--with-ldap"
-      args << "--with-ldap-sasl=/usr"
     end
 
     if build.with? "libmysql"
