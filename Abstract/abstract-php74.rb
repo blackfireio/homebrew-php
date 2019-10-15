@@ -242,7 +242,7 @@ INFO
       ("--with-ndbm=/usr" if OS.mac?),
       "--with-png-dir=#{Formula["libpng"].opt_prefix}",
       "--with-xmlrpc",
-      "--with-zlib=/usr",
+      "--with-zlib",
       "--with-readline=#{Formula["readline"].opt_prefix}",
       "--without-gmp",
       "--without-snmp",
@@ -259,6 +259,9 @@ INFO
 
     args << "SQLITE_CFLAGS=-I#{Formula["sqlite"].opt_prefix}/include"
     args << "SQLITE_LIBS=-L#{Formula["sqlite"].opt_prefix}/lib"
+
+    args << "ZLIB_CFLAGS=-I#{Formula["zlib"].opt_prefix}/include"
+    args << "ZLIB_LIBS=-L#{Formula["zlib"].opt_prefix}/lib"
 
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
