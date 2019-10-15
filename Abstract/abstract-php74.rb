@@ -129,7 +129,7 @@ INFO
   def install_args
     # Prevent PHP from harcoding sed shim path
     ENV["lt_cv_path_SED"] = "sed"
-    ENV["PKG_CONFIG_PATH"] = "#{Formula["libxml2"].opt_prefix}/lib/pkgconfig:#{ENV["PKG_CONFIG_PATH"]}"
+    ENV["PKG_CONFIG_LIBDIR"] = "/usr/local/Homebrew/Library/Homebrew/os/mac/pkgconfig/10.9:/usr/lib/pkgconfig"
 
     # Ensure system dylibs can be found by linker on Sierra
     ENV["SDKROOT"] = MacOS.sdk_path if MacOS.version == :sierra
