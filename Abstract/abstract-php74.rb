@@ -3,7 +3,7 @@
 require "formula"
 require File.join(File.dirname(__FILE__), "abstract-php-version")
 
-class AbstractPhp < Formula
+class AbstractPhp74 < Formula
   def self.init
     homepage "https://php.net"
 
