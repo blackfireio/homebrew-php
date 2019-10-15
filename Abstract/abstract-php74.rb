@@ -36,7 +36,6 @@ class AbstractPhp74 < Formula
     depends_on "imap-uw" if build.include?("with-imap")
     depends_on "libxml2"
     depends_on "readline"
-    depends_on "mysql"
     depends_on "oniguruma" if name.split("::")[2].downcase.start_with?("php74")
     depends_on "openssl"
   end
