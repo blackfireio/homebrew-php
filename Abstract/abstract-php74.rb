@@ -48,19 +48,10 @@ class AbstractPhp74 < Formula
     depends_on "libzip" if name.split("::")[2].downcase.start_with?("php73")
     depends_on "krb5" if name.split("::")[2].downcase.start_with?("php74")
     depends_on "oniguruma" if name.split("::")[2].downcase.start_with?("php74")
-
-    # ssl
-    if build.include?("with-homebrew-libressl")
-      depends_on "libressl"
-    else
-      depends_on "openssl"
-    end
+    depends_on "libressl"
 
     #argon for 7.2
-    depends_on "argon2" => :optional if build.include?("with-argon2")
-
-    # libsodium for 7.2
-    depends_on "libsodium" => :recommended if name.split("::")[2].downcase.start_with?("php72", "php73")
+    depends_on "libsodium"
 
     deprecated_option "with-pgsql" => "with-postgresql"
     depends_on "postgresql" => :optional
@@ -81,16 +72,9 @@ class AbstractPhp74 < Formula
 
     depends_on "httpd" => :optional
 
-    # Argon2 option
-    if name.split("::")[2].downcase.start_with?("php72", "php73")
-      option "with-argon2", "Include libargon2 password hashing support"
-    end
-
     option "with-cgi", "Enable building of the CGI executable (implies --without-fpm)"
     option "with-debug", "Compile with debugging symbols"
     option "with-embed", "Compile with embed support (built as a static library)"
-    option "with-homebrew-libressl", "Include LibreSSL instead of OpenSSL via Homebrew"
-    option "with-homebrew-libxslt", "Include LibXSLT support via Homebrew"
     option "with-imap", "Include IMAP extension"
     option "with-libmysql", "Include (old-style) libmysql support instead of mysqlnd"
     option "with-mssql", "Include MSSQL-DB support"
@@ -228,10 +212,10 @@ INFO
       "--enable-sysvshm",
       "--with-zip",
       "--with-gettext=#{Formula["gettext"].opt_prefix}",
-      ("--with-iconv-dir=/usr" if OS.mac?),
-      ("--with-kerberos=#{Formula["krb5"].opt_prefix}" if OS.mac?),
+      "--with-iconv-dir=/usr",
+      "--with-kerberos",
       "--with-mhash",
-      ("--with-ndbm=/usr" if OS.mac?),
+      "--with-ndbm=/usr",
       "--with-xmlrpc",
       "--with-zlib",
       "--with-readline=#{Formula["readline"].opt_prefix}",
@@ -245,8 +229,8 @@ INFO
     args << "KERBEROS_CFLAGS=-I#{Formula["krb5"].opt_prefix}/include"
     args << "KERBEROS_LIBS=-L#{Formula["krb5"].opt_prefix}/lib"
 
-    args << "OPENSSL_CFLAGS=-I#{Formula["openssl"].opt_prefix}/include"
-    args << "OPENSSL_LIBS=-L#{Formula["openssl"].opt_prefix}/lib"
+    args << "OPENSSL_CFLAGS=-I#{Formula["libressl"].opt_prefix}/include"
+    args << "OPENSSL_LIBS=-L#{Formula["libressl"].opt_prefix}/lib"
 
     args << "SQLITE_CFLAGS=-I#{Formula["sqlite"].opt_prefix}/include"
     args << "SQLITE_LIBS=-L#{Formula["sqlite"].opt_prefix}/lib"
@@ -269,15 +253,13 @@ INFO
     args << "LIBZIP_CFLAGS=-I#{Formula["libzip"].opt_prefix}/include"
     args << "LIBZIP_LIBS=-L#{Formula["libzip"].opt_prefix}/lib"
 
+    args << "LIBSODIUM_CFLAGS=-I#{Formula["libsodium"].opt_prefix}/include"
+    args << "LIBSODIUM_LIBS=-L#{Formula["libsodium"].opt_prefix}/lib"
+
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
       args << "--with-pdo-odbc=unixODBC,#{Formula["unixodbc"].opt_prefix}"
       args << "--with-unixODBC=#{Formula["unixodbc"].opt_prefix}"
-    end
-
-    # Build with argon2 support (Password Hashing API)
-    if build.with?("argon2")
-      args << "--with-password-argon2=#{Formula["argon2"].opt_prefix}"
     end
 
     # Build Apache module by default
@@ -305,14 +287,10 @@ INFO
     end
 
     if build.with? "enchant"
-      args << "--with-enchant=#{Formula["enchant"].opt_prefix}"
+      args << "--with-enchant"
     end
 
-    if build.include?("with-homebrew-libressl")
-      args << "--with-openssl=" + Formula["libressl"].opt_prefix.to_s
-    else
-      args << "--with-openssl=" + Formula["openssl"].opt_prefix.to_s
-    end
+    args << "--with-openssl"
 
     # Build PHP-FPM by default
     if build_fpm?
@@ -327,17 +305,8 @@ INFO
       args << "--enable-cgi"
     end
 
-    if build.include?("with-homebrew-curl") || MacOS.version < :lion
-      args << "--with-curl=#{Formula["curl"].opt_prefix}"
-    else
-      args << "--with-curl"
-    end
-
-    if build.with? "homebrew-libxslt"
-      args << "--with-xsl=" + Formula["libxslt"].opt_prefix.to_s
-    elsif OS.mac?
-      args << "--with-xsl=/usr"
-    end
+    args << "--with-curl"
+    args << "--with-xsl"
 
     if build.with? "imap"
       args << "--with-imap=#{Formula["imap-uw"].opt_prefix}"
@@ -363,14 +332,6 @@ INFO
 
     if build.with? "pcntl"
       args << "--enable-pcntl"
-    end
-
-    if build.with? "pdo-oci"
-      if ENV.key?("ORACLE_HOME")
-        args << "--with-pdo-oci=#{ENV["ORACLE_HOME"]}"
-      else
-        raise "Environmental variable ORACLE_HOME must be set to use --with-pdo-oci option."
-      end
     end
 
     if build.without? "pear"
@@ -415,9 +376,7 @@ INFO
       args << "--enable-maintainer-zts"
     end
 
-    if build.with? "libsodium"
-        args << "--with-sodium=#{Formula['libsodium'].opt_prefix}"
-    end
+    args << "--with-sodium"
 
     args
   end
