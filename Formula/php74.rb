@@ -1,4 +1,4 @@
-require File.expand_path("../../Abstract/abstract-php", __FILE__)
+require File.expand_path("../../Abstract/abstract-php74", __FILE__)
 
 class Php74 < AbstractPhp74
   init
