@@ -263,6 +263,9 @@ INFO
     args << "XSL_CFLAGS=-I#{Formula["libxslt"].opt_prefix}/include"
     args << "XSL_LIBS=-L#{Formula["libxslt"].opt_prefix}/lib"
 
+    args << "PNG_CFLAGS=-I#{Formula["libpng"].opt_prefix}/include"
+    args << "PNG_LIBS=-L#{Formula["libpng"].opt_prefix}/lib"
+
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
       args << "--with-pdo-odbc=unixODBC,#{Formula["unixodbc"].opt_prefix}"
