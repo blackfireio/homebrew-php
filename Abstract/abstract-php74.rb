@@ -257,8 +257,8 @@ INFO
     args << "OPENSSL_CFLAGS=-I#{Formula["openssl"].opt_prefix}/include"
     args << "OPENSSL_LIBS=-L#{Formula["openssl"].opt_prefix}/lib"
 
-    args << "SQLLITE_CFLAGS=-I#{Formula["sqlite"].opt_prefix}/include"
-    args << "SQLLITE_LIBS=-L#{Formula["sqlite"].opt_prefix}/lib"
+    args << "SQLITE_CFLAGS=-I#{Formula["sqlite"].opt_prefix}/include"
+    args << "SQLITE_LIBS=-L#{Formula["sqlite"].opt_prefix}/lib"
 
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
