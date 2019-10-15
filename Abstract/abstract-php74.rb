@@ -48,7 +48,7 @@ class AbstractPhp74 < Formula
     depends_on "libzip" if name.split("::")[2].downcase.start_with?("php73")
     depends_on "krb5" if name.split("::")[2].downcase.start_with?("php74")
     depends_on "oniguruma" if name.split("::")[2].downcase.start_with?("php74")
-    depends_on "libressl"
+    depends_on "openssl"
 
     #argon for 7.2
     depends_on "libsodium"
@@ -229,8 +229,8 @@ INFO
     args << "KERBEROS_CFLAGS=-I#{Formula["krb5"].opt_prefix}/include"
     args << "KERBEROS_LIBS=-L#{Formula["krb5"].opt_prefix}/lib"
 
-    args << "OPENSSL_CFLAGS=-I#{Formula["libressl"].opt_prefix}/include"
-    args << "OPENSSL_LIBS=-L#{Formula["libressl"].opt_prefix}/lib"
+    args << "OPENSSL_CFLAGS=-I#{Formula["openssl"].opt_prefix}/include"
+    args << "OPENSSL_LIBS=-L#{Formula["openssl"].opt_prefix}/lib"
 
     args << "SQLITE_CFLAGS=-I#{Formula["sqlite"].opt_prefix}/include"
     args << "SQLITE_LIBS=-L#{Formula["sqlite"].opt_prefix}/lib"
