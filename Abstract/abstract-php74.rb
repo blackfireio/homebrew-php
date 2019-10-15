@@ -256,6 +256,9 @@ INFO
     args << "KERBEROS_CFLAGS=-I#{Formula["krb5"].opt_prefix}/include"
     args << "KERBEROS_LIBS=-L#{Formula["krb5"].opt_prefix}/lib"
 
+    args << "OPENSSL_CFLAGS=-I#{Formula["openssl"].opt_prefix}/include"
+    args << "OPENSSL_LIBS=-L#{Formula["openssl"].opt_prefix}/lib"
+
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
       args << "--with-pdo-odbc=unixODBC,#{Formula["unixodbc"].opt_prefix}"
