@@ -253,6 +253,9 @@ INFO
       args << "LIBXML_LIBS=-L#{Formula["libxml2"].opt_prefix}/lib"
     end
 
+    args << "KERBEROS_CFLAGS=-I#{Formula["krb5"].opt_prefix}/include"
+    args << "KERBEROS_LIBS=-L#{Formula["krb5"].opt_prefix}/lib"
+
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
       args << "--with-pdo-odbc=unixODBC,#{Formula["unixodbc"].opt_prefix}"
