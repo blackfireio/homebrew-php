@@ -267,7 +267,7 @@ INFO
     args << "PNG_LIBS=-L#{Formula["libpng"].opt_prefix}/lib"
 
     args << "LIBZIP_CFLAGS=-I#{Formula["libzip"].opt_prefix}/include"
-    args << "LIBZIP_LIBS=-L#{Formula["libpzip"].opt_prefix}/lib"
+    args << "LIBZIP_LIBS=-L#{Formula["libzip"].opt_prefix}/lib"
 
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
