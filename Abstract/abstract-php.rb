@@ -16,7 +16,7 @@ class AbstractPhp < Formula
       depends_on "re2c" => :build
       depends_on "flex" => :build
       #depends_on "bison@2.7" => :build
-      depends_on "bison@3.4" => :build TODO: this is needed by php7.4
+      depends_on "bison@3.4" => :build # TODO: this is needed by php7.4
       depends_on "pkg-config" => :build
     end
 
