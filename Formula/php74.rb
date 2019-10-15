@@ -1,9 +1,9 @@
 require File.expand_path("../../Abstract/abstract-php", __FILE__)
 
-class Php74 < AbstractPhp
+class Php74 < AbstractPhp74
   init
   desc "PHP Version 7.4"
-  revision 18
+  revision 19
 
   include AbstractPhpVersion::Php74Defs
 
