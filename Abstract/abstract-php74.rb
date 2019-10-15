@@ -152,10 +152,13 @@ INFO
       "--with-readline",
       "--with-recode",
       "--with-zlib",
-      "--with-mysqli",
       "--with-pgsql",
       "--with-pear",
     ]
+
+    args << "--with-mysql-sock=/tmp/mysql.sock"
+    args << "--with-mysqli=mysqlnd"
+    args << "--with-pdo-mysql=mysqlnd"
 
     args << "--with-openssl-dir=" + Formula["openssl"].opt_prefix.to_s
 
