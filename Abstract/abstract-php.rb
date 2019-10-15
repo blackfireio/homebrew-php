@@ -47,7 +47,8 @@ class AbstractPhp < Formula
     depends_on "unixodbc" unless build.include?("without-unixodbc")
     depends_on "readline"
     depends_on "mysql" if build.include?("with-libmysql")
-    depends_on "libzip"  if name.split("::")[2].downcase.start_with?("php73")
+    depends_on "libzip" if name.split("::")[2].downcase.start_with?("php73")
+    depends_on "krb5" if name.split("::")[2].downcase.start_with?("php74")
 
     # ssl
     if build.include?("with-homebrew-libressl")
@@ -237,7 +238,7 @@ INFO
       ("--with-iconv-dir=/usr" if OS.mac?),
       "--with-icu-dir=#{Formula["icu4c"].opt_prefix}",
       "--with-jpeg-dir=#{Formula["jpeg"].opt_prefix}",
-      #("--with-kerberos=/usr" if OS.mac?),
+      ("--with-kerberos=/usr" if OS.mac?),
       "--with-mhash",
       ("--with-ndbm=/usr" if OS.mac?),
       "--with-png-dir=#{Formula["libpng"].opt_prefix}",
