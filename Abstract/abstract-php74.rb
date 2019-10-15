@@ -265,6 +265,9 @@ INFO
     args << "ONIG_CFLAGS=-I#{Formula["oniguruma"].opt_prefix}/include"
     args << "ONIG_LIBS=-L#{Formula["oniguruma"].opt_prefix}/lib"
 
+    args << "XSL_CFLAGS=-I#{Formula["libxslt"].opt_prefix}/include"
+    args << "XSL_LIBS=-L#{Formula["libxslt"].opt_prefix}/lib"
+
     # Build PDO ODBC with unixODBC by default
     unless build.without? "unixodbc"
       args << "--with-pdo-odbc=unixODBC,#{Formula["unixodbc"].opt_prefix}"
